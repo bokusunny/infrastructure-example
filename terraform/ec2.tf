@@ -4,17 +4,17 @@ resource "aws_security_group" "example_security_group" {
     vpc_id      = aws_vpc.example_VPC.id
 
     # ingress {
-    #   # TLS (change to whatever ports you need)
-    #   from_port   = 443
-    #   to_port     = 443
-    #   protocol    = "tcp"
-    #   # Please restrict your ingress to only necessary IPs and ports.
-    #   # Opening to 0.0.0.0/0 can lead to security vulnerabilities.
-    #   cidr_blocks = # add your IP address here
+    #     # TLS (change to whatever ports you need)
+    #     from_port   = 443
+    #     to_port     = 443
+    #     protocol    = "tcp"
+    #     # Please restrict your ingress to only necessary IPs and ports.
+    #     # Opening to 0.0.0.0/0 can lead to security vulnerabilities.
+    #     cidr_blocks = # add your IP address here
     # }
 
     tags = {
-      Name = "example_security_group"
+        Name = "example_security_group"
     }
 }
 
@@ -38,9 +38,4 @@ resource "aws_instance" "exmple_instance" {
     tags = {
         Name = "exmple_instance"
     }
-}
-
-resource "aws_eip" "Orbit_api_eip" {
-    instance          = aws_instance.exmple_instance.id
-    vpc               = true
 }
