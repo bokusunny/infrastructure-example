@@ -60,9 +60,9 @@ resource "aws_instance" "exmple_instance" {
 }
 
 # resource "aws_elb" "example_elb" {
-#   name               = "example-elb"
+#   name = "example-elb"
 #   availability_zones = var.default_availability_zone_names
-#   security_groups    = [aws_security_group.example_security_group.id]
+#   security_groups = [aws_security_group.example_security_group.id]
 
 #   listener {
 #     instance_port     = 80
