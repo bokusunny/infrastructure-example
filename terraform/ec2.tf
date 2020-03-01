@@ -3,19 +3,39 @@ resource "aws_security_group" "example_security_group" {
   description = "allows http from elb and direct ssh"
   vpc_id      = aws_vpc.example_VPC.id
 
-  ingress {
-    # TLS (change to whatever ports you need)
-    from_port = 443
-    to_port   = 443
-    protocol  = "tcp"
-    # Please restrict your ingress to only necessary IPs and ports.
-    # Opening to 0.0.0.0/0 can lead to security vulnerabilities.
-    # cidr_blocks = # add your IP address here
-  }
-
   tags = {
     Name = "example-security_group"
   }
+}
+
+resource "aws_security_group_rule" "allow_all_http" {
+  type        = "ingress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = aws_security_group.example_security_group.id
+}
+
+resource "aws_security_group_rule" "allow_ssh" {
+  type        = "ingress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = aws_security_group.example_security_group.id
+}
+
+resource "aws_security_group_rule" "allow_all_outbound_traffic" {
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = aws_security_group.example_security_group.id
 }
 
 resource "aws_instance" "exmple_instance" {
@@ -23,7 +43,7 @@ resource "aws_instance" "exmple_instance" {
   availability_zone      = var.default_availability_zone
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.example_subnet.id
-  vpc_security_group_ids = ["sg-033706907752ad02d"] // 変える
+  vpc_security_group_ids = [aws_security_group.example_security_group.id]
 
   root_block_device {
     volume_type = "gp2"
@@ -39,12 +59,6 @@ resource "aws_elb" "example_elb" {
   name               = "example-elb"
   availability_zones = var.default_availability_zone_names
   security_groups    = [aws_security_group.example_security_group.id]
-
-  # access_logs {
-  #     bucket        = "foo"
-  #     bucket_prefix = "bar"
-  #     interval      = 60
-  # }
 
   listener {
     instance_port     = 8000
