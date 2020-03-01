@@ -42,11 +42,12 @@ resource "aws_security_group_rule" "allow_all_outbound_traffic" {
 }
 
 resource "aws_instance" "exmple_instance" {
-  ami                    = "ami-02ddf94e5edc8e904" // AWS-supported linux image
-  availability_zone      = var.default_availability_zone
-  instance_type          = "t2.micro"
-  subnet_id              = aws_subnet.example_subnet.id
-  vpc_security_group_ids = [aws_security_group.example_security_group.id]
+  ami                         = "ami-02ddf94e5edc8e904" # AWS-supported linux image
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.example_subnet.id
+  vpc_security_group_ids      = [aws_security_group.example_security_group.id]
+  key_name                    = "terraform-example"
+  associate_public_ip_address = true
 
   root_block_device {
     volume_type = "gp2"
@@ -58,41 +59,33 @@ resource "aws_instance" "exmple_instance" {
   }
 }
 
-resource "aws_elb" "example_elb" {
-  name               = "example-elb"
-  availability_zones = var.default_availability_zone_names
-  security_groups    = [aws_security_group.example_security_group.id]
+# resource "aws_elb" "example_elb" {
+#   name               = "example-elb"
+#   availability_zones = var.default_availability_zone_names
+#   security_groups    = [aws_security_group.example_security_group.id]
 
-  listener {
-    instance_port     = 80
-    instance_protocol = "http"
-    lb_port           = 80
-    lb_protocol       = "http"
-  }
+#   listener {
+#     instance_port     = 80
+#     instance_protocol = "http"
+#     lb_port           = 80
+#     lb_protocol       = "http"
+#   }
 
-  # listener {
-  #     instance_port      = 8000
-  #     instance_protocol  = "http"
-  #     lb_port            = 443
-  #     lb_protocol        = "https"
-  #     ssl_certificate_id = "arn:aws:iam::123456789012:server-certificate/certName"
-  # }
+#   health_check {
+#     healthy_threshold   = 2
+#     unhealthy_threshold = 2
+#     timeout             = 3
+#     target              = "HTTP:80/"
+#     interval            = 30
+#   }
 
-  health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 3
-    target              = "HTTP:80/"
-    interval            = 30
-  }
+#   instances                   = [aws_instance.exmple_instance.id]
+#   cross_zone_load_balancing   = true
+#   idle_timeout                = 400
+#   connection_draining         = true
+#   connection_draining_timeout = 400
 
-  instances                   = [aws_instance.exmple_instance.id]
-  cross_zone_load_balancing   = true
-  idle_timeout                = 400
-  connection_draining         = true
-  connection_draining_timeout = 400
-
-  tags = {
-    Name = "example-elb"
-  }
-}
+#   tags = {
+#     Name = "example-elb"
+#   }
+# }
