@@ -14,7 +14,7 @@ variable "aws_secret_key" {
   }
 }
 
-variable "default_region" {
+variable "default_availability_zone" {
   type    = string
-  default = "ap-northeast-1"
+  default = "ap-northeast-1a"
 }
