@@ -19,11 +19,14 @@ resource "aws_security_group_rule" "allow_all_http" {
 }
 
 resource "aws_security_group_rule" "allow_ssh" {
-  type        = "ingress"
-  from_port   = 80
-  to_port     = 80
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  type      = "ingress"
+  from_port = 22
+  to_port   = 22
+  protocol  = "tcp"
+  cidr_blocks = [
+    "61.124.137.74/32",  # 家
+    "150.249.207.30/32", # Progate Office
+  ]
 
   security_group_id = aws_security_group.example_security_group.id
 }
@@ -61,7 +64,7 @@ resource "aws_elb" "example_elb" {
   security_groups    = [aws_security_group.example_security_group.id]
 
   listener {
-    instance_port     = 8000
+    instance_port     = 80
     instance_protocol = "http"
     lb_port           = 80
     lb_protocol       = "http"
@@ -79,7 +82,7 @@ resource "aws_elb" "example_elb" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "HTTP:8000/"
+    target              = "HTTP:80/"
     interval            = 30
   }
 
